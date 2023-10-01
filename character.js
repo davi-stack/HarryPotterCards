@@ -1,53 +1,85 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Obtém o ID do personagem da URL
-    const params = new URLSearchParams(window.location.search);
-    const characterId = params.get('id');
+    // Endpoint GET com a lista de personagens
+    const endpoint = 'https://hp-api.onrender.com/api/characters';
 
-    // Lista de personagens (você deve carregar esta lista a partir do endpoint na página anterior)
-    const characters = [
-        {
-            "id": "9e3f7ce4-b9a7-4244-b709-dae5c1f1d4a8",
-            "name": "Harry Potter",
-            "species": "Human",
-            "gender": "Male",
-            "hairColour": "Black",
-            "eyeColour": "Green",
-            "actor": "Daniel Radcliffe",
-            "image": "https://ik.imagekit.io/hpapi/harry.jpg",
-            // Adicione mais informações do personagem aqui
-        },
-        // Outros personagens
-    ];
+    // Referências aos elementos do DOM
+    const filterInput = document.getElementById('filterInput');
+    const filterButton = document.getElementById('filterButton');
+    const characterList = document.getElementById('characterList');
 
-    // Encontra o personagem com o ID correspondente
-    const character = characters.find(char => char.id === characterId);
+    // Função para carregar a lista de personagens
+    function loadCharacters() {
+        axios.get(endpoint)
+            .then(response => {
+                const characters = response.data;
 
-    // Referência ao elemento do DOM onde os detalhes do personagem serão exibidos
-    const characterDetails = document.getElementById('characterDetails');
+                // Limpa a lista de personagens
+                characterList.innerHTML = '';
 
-    // Função para preencher os detalhes do personagem
-    function fillCharacterDetails() {
-        if (character) {
-            characterDetails.innerHTML = `
-                <div class="card">
-                    <div class="card-body">
-                        <img src="${character.image}" class="img-thumbnail rounded-circle mx-auto d-block mb-3" alt="${character.name}">
-                        <h2 class="card-title text-center">${character.name}</h2>
-                        <p class="text-center">ID: ${character.id}</p>
-                        <p class="text-center">Espécie: ${character.species}</p>
-                        <p class="text-center">Gênero: ${character.gender}</p>
-                        <p class="text-center">Cor do Cabelo: ${character.hairColour}</p>
-                        <p class="text-center">Cor dos Olhos: ${character.eyeColour}</p>
-                        <p class="text-center">Ator: ${character.actor}</p>
-                        <!-- Adicione mais informações do personagem aqui -->
-                    </div>
-                </div>
-            `;
-        } else {
-            characterDetails.innerHTML = '<p>Personagem não encontrado.</p>';
-        }
+                // Itera sobre a lista de personagens e cria cartões para cada um
+                characters.forEach(character => {
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-6', 'mb-4');
+
+                    card.innerHTML = `
+                        <div class="card">
+                            <img src="${character.image}" class="card-img-top" alt="${character.name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${character.name}</h5>
+                                <a href="templates/character.html?id=${character.id}" class="btn btn-primary">Detalhes</a>
+                            </div>
+                        </div>
+                    `;
+
+                    characterList.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar personagens', error);
+            });
     }
 
-    // Preenche os detalhes do personagem
-    fillCharacterDetails();
+    // Carrega a lista de personagens ao carregar a página
+    loadCharacters();
+
+    // Função para filtrar personagens por nome
+    function filterCharacters() {
+        const searchTerm = filterInput.value.toLowerCase();
+
+        axios.get(endpoint)
+            .then(response => {
+                const characters = response.data;
+
+                // Filtra os personagens pelo nome
+                const filteredCharacters = characters.filter(character => {
+                    return character.name.toLowerCase().includes(searchTerm);
+                });
+
+                // Atualiza a lista de personagens com o resultado do filtro
+                characterList.innerHTML = '';
+
+                filteredCharacters.forEach(character => {
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-6', 'mb-4');
+
+                    card.innerHTML = `
+                        <div class="card">
+                            <img src="${character.image}" class="card-img-top" alt="${character.name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${character.name}</h5>
+                                <a href="templates/character.html?id=${character.id}" class="btn btn-primary">Detalhes</a>
+                            </div>
+                        </div>
+                    `;
+
+                    characterList.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao filtrar personagens', error);
+            });
+    }
+
+    // Configura o evento de clique no botão de filtro
+    filterButton.addEventListener('click', filterCharacters);
 });

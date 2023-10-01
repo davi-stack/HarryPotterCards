@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <img src="${character.image}" class="card-img-top" alt="${character.name}">
                             <div class="card-body">
                                 <h5 class="card-title">${character.name}</h5>
-                                <a href="character.html?id=${character.id}" class="btn btn-primary">Detalhes</a>
+                                <a href="templates/character.html?id=${character.id}" class="btn btn-primary">Detalhes</a>
                             </div>
                         </div>
                     `;
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <img src="${character.image}" class="card-img-top" alt="${character.name}">
                             <div class="card-body">
                                 <h5 class="card-title">${character.name}</h5>
-                                <a href="character.html?id=${character.id}" class="btn btn-primary">Detalhes</a>
+                                <a href="templates/character.html?id=${character.id}" class="btn btn-primary">Detalhes</a>
                             </div>
                         </div>
                     `;
