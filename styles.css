@@ -1,5 +1,7 @@
 /* Personalize como desejar */
-
+body{
+backcgroundColor:red;
+}
 .card {
     border: none;
 }
